@@ -1,0 +1,12 @@
+
+.product {
+    max-width: 350px;
+    border: 2px solid blue;
+    text-align: center;
+    padding: 15px 10px;
+    margin-bottom: 20px;
+}
+
+.product.sale {
+    background-color: beige;
+}
