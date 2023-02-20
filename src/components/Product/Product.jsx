@@ -1,24 +1,12 @@
 import PropTypes from "prop-types";
 
-// import css from "./Product.module.css";
 import { StyledBadge, StyledProduct } from "./Product.styled";
 
 function Product({ title, price, discount = false }) {
-  //   const divStyles = {
-  //     maxWidth: "350px",
-  //     border: "2px solid blue",
-  //     textAlign: "left",
-  //     padding: "15px 10px",
-  //     marginBottom: 20,
-  //     transform: "translateX(50%) scale(0.5)",
-  //   }
 
   const hasDiscount = discount !== false;
   return (
     <StyledProduct
-    //   style={divStyles} // inline-styles
-    //   className={`product ${hasDiscount ? "sale" : ""}`} // vanilla css
-    //   className={`${css.product} ${hasDiscount ? css.sale : ""}`} // css-modules
         className={hasDiscount ? "sale" : ""}
     >
       <img
