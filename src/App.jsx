@@ -1,25 +1,26 @@
 import React from "react";
+
 import ProductList from "./components/ProductList/ProductList";
+import Details from "./components/Details/Details";
+import ProductForm from "./components/ProductForm/ProductForm";
 
 import "./App.css";
-import Details from "./components/Details/Details";
 
 const productsData = [
   {
-    id: "3",
+    id: "3", // "3" !== "2" - true
     title: "Tacos With Lime M",
     price: 5.85,
     discount: 15,
-    activeSale: "18.02.2023",
   },
   {
-    id: "1",
+    id: "1",// "1" !== "2" - true
     title: "Tacos With Lime XXL",
     price: 10.99,
     discount: 30,
   },
   {
-    id: "2",
+    id: "2", // "2" !== "2" - false
     title: "Tacos With Lime XL",
     price: 6.99,
     discount: false,
@@ -38,40 +39,54 @@ class App extends React.Component {
     counter: 0,
     author: "Maxi",
     age: 20,
+    products: productsData,
   };
 
   handleBtnClick = (event) => {
-    // 1. this.setState((prevState) => ({ counter: prevState.counter + 1})); - 5% задач
-    // 2. this.setState({ counter: this.state.counter + 1}); - 95% задач
-
-    this.setState((prevState) => { // { counter: 0, author: "Maxi", age: 20,}
+    this.setState((prevState) => {
+      // { counter: 0, author: "Maxi", age: 20,}
       return { counter: prevState.counter + 1 };
     });
-    this.setState((prevState) => { // { counter: 1, author: "Maxi", age: 20,}
-      return { counter: prevState.counter + 1 };
-    });
-    this.setState((prevState) => { // { counter: 2, author: "Maxi", age: 20,}
-      return { counter: prevState.counter + 1 };
-    });
-
-    // { ...{counter: 0, author: "Maxi", age: 20}, ...{ counter: 32323, age: 21 } }
-    // -> { counter: 32323, author: "Maxi", age: 21, }
   };
+
+  onAddProduct = (product) => {
+    if(this.state.products.some(p => p.title === product.title)) {
+      alert(`Oops, product ${product.title} is already in your list`);
+      return -1;
+    }
+
+    const finalProduct = {
+      id: (Math.random() * 100).toString(),
+      ...product,
+    };
+
+    this.setState({
+      products: [finalProduct, ...this.state.products],
+    });
+    return 1;
+    // this.setState((prevState) => {
+    //   return { products: [finalProduct, ...prevState.products] };
+    // });
+  };
+
+  onDeleteProduct = (productId) => { // "2"
+    this.setState({
+      products: this.state.products.filter(product => product.id !== productId)
+    })
+  }
 
   render() {
     return (
       <div className="App">
+        <ProductForm onAddProduct={this.onAddProduct} />
         <Details
           handleBtnClick={this.handleBtnClick}
           text="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, numquam!"
           counterValue={this.state.counter}
         />
 
-        <h3>Counter inside the App: {this.state.counter}</h3>
-        <h3>Age inside the App: {this.state.age}</h3>
         <br />
-        <br />
-        <ProductList products={productsData} />
+        <ProductList onDeleteProduct={this.onDeleteProduct} products={this.state.products} />
       </div>
     );
   }

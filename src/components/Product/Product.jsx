@@ -2,12 +2,12 @@ import PropTypes from "prop-types";
 
 import { StyledBadge, StyledProduct } from "./Product.styled";
 
-function Product({ title, price, discount = false }) {
+function Product({ id, title, price, discount = false, onDeleteProduct }) {
 
-  const hasDiscount = discount !== false;
+  const hasDiscount = Boolean(discount);
   return (
     <StyledProduct
-        className={hasDiscount ? "sale" : ""}
+        className={`someClass ${hasDiscount ? "sale" : ""}`}
     >
       <img
         src="https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg?dpr=2&h=480&w=640"
@@ -25,6 +25,7 @@ function Product({ title, price, discount = false }) {
         ) : null}
       </p>
       <button type="button">Add to cart</button>
+      <button onClick={() => onDeleteProduct(id)} type="button">&times;</button>
     </StyledProduct>
   );
 }
@@ -33,6 +34,7 @@ Product.propTypes = {
   title: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
+  onDeleteProduct: PropTypes.func
 };
 
 export default Product;
