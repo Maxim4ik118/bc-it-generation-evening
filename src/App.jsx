@@ -14,7 +14,7 @@ const productsData = [
     discount: 15,
   },
   {
-    id: "1",// "1" !== "2" - true
+    id: "1", // "1" !== "2" - true
     title: "Tacos With Lime XXL",
     price: 10.99,
     discount: 30,
@@ -36,21 +36,45 @@ const productsData = [
 */
 class App extends React.Component {
   state = {
-    counter: 0,
-    author: "Maxi",
-    age: 20,
-    products: productsData,
+    pressedKey: "",
+    // products: JSON.parse(localStorage.getItem('products')) ?? [],
+    products: [],
+    showDetails: false,
   };
 
-  handleBtnClick = (event) => {
-    this.setState((prevState) => {
-      // { counter: 0, author: "Maxi", age: 20,}
-      return { counter: prevState.counter + 1 };
-    });
+  componentDidMount() {
+    const parsedProducts = JSON.parse(localStorage.getItem("products"));
+    if (parsedProducts !== null) {
+      this.setState({ products: parsedProducts });
+    }
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.products.length !== this.state.products.length) {
+      localStorage.setItem("products", JSON.stringify(this.state.products));
+    }
+
+    if (prevState.showDetails !== this.state.showDetails) {
+      console.log(
+        "Show details was changed and now is equal to :",
+        this.state.showDetails
+      );
+    }
+
+    if (prevState.pressedKey !== this.state.pressedKey) {
+      console.log(
+        "Pressed Key was changed and now is equal to :",
+        this.state.pressedKey
+      );
+    }
+  }
+
+  handlePressKey = (key) => {
+    this.setState({ pressedKey: key });
   };
 
   onAddProduct = (product) => {
-    if(this.state.products.some(p => p.title === product.title)) {
+    if (this.state.products.some((p) => p.title === product.title)) {
       alert(`Oops, product ${product.title} is already in your list`);
       return -1;
     }
@@ -63,30 +87,43 @@ class App extends React.Component {
     this.setState({
       products: [finalProduct, ...this.state.products],
     });
+
     return 1;
-    // this.setState((prevState) => {
-    //   return { products: [finalProduct, ...prevState.products] };
-    // });
   };
 
-  onDeleteProduct = (productId) => { // "2"
+  onDeleteProduct = (productId) => {
+    // "2"
     this.setState({
-      products: this.state.products.filter(product => product.id !== productId)
-    })
-  }
+      products: this.state.products.filter(
+        (product) => product.id !== productId
+      ),
+    });
+  };
+
+  handleToggleDetails = () => {
+    this.setState({
+      showDetails: !this.state.showDetails,
+    });
+  };
 
   render() {
     return (
       <div className="App">
-        <ProductForm onAddProduct={this.onAddProduct} />
-        <Details
-          handleBtnClick={this.handleBtnClick}
-          text="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, numquam!"
-          counterValue={this.state.counter}
-        />
+        <button onClick={this.handleToggleDetails}>Toggle details</button>
+        {this.state.showDetails && (
+          <Details
+            text="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, numquam!"
+            pressedKey={this.state.pressedKey}
+            handlePressKey={this.handlePressKey}
+          />
+        )}
 
+        <ProductForm onAddProduct={this.onAddProduct} />
         <br />
-        <ProductList onDeleteProduct={this.onDeleteProduct} products={this.state.products} />
+        <ProductList
+          onDeleteProduct={this.onDeleteProduct}
+          products={this.state.products}
+        />
       </div>
     );
   }
