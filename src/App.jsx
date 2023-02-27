@@ -5,6 +5,9 @@ import Details from "./components/Details/Details";
 import ProductForm from "./components/ProductForm/ProductForm";
 
 import "./App.css";
+import { requestPostComments, requestPosts } from "./services/api";
+import { CommentsList, ListsContainer, PostsList } from "./App.styled";
+import Loader from "./components/Loader/Loader";
 
 const productsData = [
   {
@@ -34,76 +37,88 @@ const productsData = [
 2. В нього прийшли нові пропси
 
 */
+
 class App extends React.Component {
   state = {
     pressedKey: "",
     // products: JSON.parse(localStorage.getItem('products')) ?? [],
-    products: [],
     showDetails: false,
+    selectedPostId: null,
+    // page: 1,
+    // query: "",
+
+    posts: null,
+    comments: null,
+    isLoading: false,
+    error: null,
+  };
+
+  handleLoadMore = () => {
+    this.setState((prev) => ({ page: prev.page + 1 }));
+  };
+  handleSetSearchQuery = (searchTerm) => {
+    this.setState({ query: searchTerm });
   };
 
   componentDidMount() {
-    const parsedProducts = JSON.parse(localStorage.getItem("products"));
-    if (parsedProducts !== null) {
-      this.setState({ products: parsedProducts });
-    }
+    const fetchPosts = async () => {
+      try {
+        this.setState({ isLoading: true });
+        const posts = await requestPosts();
+
+        this.setState({ posts });
+      } catch (error) {
+        this.setState({ error: error.message });
+      } finally {
+        this.setState({ isLoading: false });
+      }
+    };
+
+    fetchPosts();
   }
 
   componentDidUpdate(_, prevState) {
-    if (prevState.products.length !== this.state.products.length) {
-      localStorage.setItem("products", JSON.stringify(this.state.products));
+    if (
+      prevState.selectedPostId !== this.state.selectedPostId &&
+      this.state.selectedPostId !== null
+    ) {
+      const fetchPostComments = async (postId) => {
+        try {
+          this.setState({ isLoading: true });
+          const comments = await requestPostComments(postId);
+
+          this.setState({ comments });
+        } catch (error) {
+          this.setState({ error: error.message });
+        } finally {
+          this.setState({ isLoading: false });
+        }
+      };
+
+      fetchPostComments(this.state.selectedPostId);
     }
 
-    if (prevState.showDetails !== this.state.showDetails) {
-      console.log(
-        "Show details was changed and now is equal to :",
-        this.state.showDetails
-      );
-    }
-
-    if (prevState.pressedKey !== this.state.pressedKey) {
-      console.log(
-        "Pressed Key was changed and now is equal to :",
-        this.state.pressedKey
-      );
-    }
+    // if (prevState.page !== this.state.page || prevState.query !== this.state.query) {
+    //   // Ваш запит на сервер за додатковими картинками
+    // }
   }
 
   handlePressKey = (key) => {
     this.setState({ pressedKey: key });
   };
 
-  onAddProduct = (product) => {
-    if (this.state.products.some((p) => p.title === product.title)) {
-      alert(`Oops, product ${product.title} is already in your list`);
-      return -1;
-    }
-
-    const finalProduct = {
-      id: (Math.random() * 100).toString(),
-      ...product,
-    };
-
-    this.setState({
-      products: [finalProduct, ...this.state.products],
-    });
-
-    return 1;
-  };
-
-  onDeleteProduct = (productId) => {
-    // "2"
-    this.setState({
-      products: this.state.products.filter(
-        (product) => product.id !== productId
-      ),
-    });
-  };
-
   handleToggleDetails = () => {
     this.setState({
       showDetails: !this.state.showDetails,
     });
+  };
+
+  handleSelectPostId = (postId) => {
+    if (this.state.selectedPostId === postId) {
+      this.setState({ selectedPostId: null, comments: null });
+    } else {
+      this.setState({ selectedPostId: postId });
+    }
   };
 
   render() {
@@ -118,12 +133,57 @@ class App extends React.Component {
           />
         )}
 
-        <ProductForm onAddProduct={this.onAddProduct} />
-        <br />
-        <ProductList
-          onDeleteProduct={this.onDeleteProduct}
-          products={this.state.products}
-        />
+        {this.state.isLoading && <Loader />}
+        {this.state.error !== null && (
+          <p>Oops, some error occured... {this.state.error}</p>
+        )}
+        <ListsContainer>
+          <PostsList>
+            {this.state.posts !== null &&
+              this.state.posts.map((post) => {
+                return (
+                  <li
+                    key={post.id}
+                    onClick={() => this.handleSelectPostId(post.id)}
+                    className={
+                      this.state.selectedPostId === post.id ? "selected" : ""
+                    }
+                  >
+                    <h3>{post.title}</h3>
+                    <p>
+                      <b>Body:</b> {post.body}
+                    </p>
+                    <p>
+                      <b>PostId:</b>
+                      {post.id}
+                    </p>
+                    <p>
+                      <b>UserID:</b>
+                      {post.userId}
+                    </p>
+                  </li>
+                );
+              })}
+          </PostsList>
+          {this.state.comments !== null && (
+            <CommentsList>
+              {this.state.comments.map((comment) => {
+                return (
+                  <li key={comment.id}>
+                    <h3>{comment.name}</h3>
+                    <p>
+                      <b>Email: </b> {comment.email}
+                    </p>
+                    <p>
+                      <b>Body: </b>
+                      <i>{comment.body}</i>
+                    </p>
+                  </li>
+                );
+              })}
+            </CommentsList>
+          )}
+        </ListsContainer>
       </div>
     );
   }
