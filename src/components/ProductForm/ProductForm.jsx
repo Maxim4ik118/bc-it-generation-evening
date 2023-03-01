@@ -1,93 +1,92 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-class ProductForm extends Component {
-  state = {
-    title: "",
+function ProductForm({ onAddProduct }) {
+  const [formData, setFormData] = useState({
     price: "",
     discount: "",
-  };
+    title: "",
+  });
 
-  handleInputChange = ({ target: { name, value } }) => {
-    // const { name, value } = event.target;
-
-    this.setState({
+  const handleInputChange = ({ target: { name, value } }) => {
+    setFormData({
+      ...formData,
       [name]: value,
     });
-
-    // this.state.title
-    // this.state["title"]
   };
 
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
     const product = {
-      title: this.state.title,
-      price: Number.parseFloat(this.state.price),
+      title: formData.title,
+      price: Number.parseFloat(formData.price),
       discount:
-        this.state.discount.length === 0
+        formData.discount.length === 0
           ? false
-          : Number.parseInt(this.state.discount),
+          : Number.parseInt(formData.discount),
     };
 
-    const isSuccess = this.props.onAddProduct(product);
+    const isSuccess = onAddProduct(product);
 
     if (isSuccess === 1) {
-      this.reset();
+      reset();
     }
   };
 
-  reset() {
-    this.setState({
+  const reset = () => {
+    setFormData({
       title: "",
       price: "",
       discount: "",
-    });
-  }
+    })
+  };
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <h2>Product Form</h2>
-        <label>
-          <b>Title: </b>
-          <input
-            name="title"
-            value={this.state.title}
-            onChange={this.handleInputChange}
-            type="text"
-            placeholder="Назва продукту"
-            required
-          />
-        </label>
-        <br />
-        <label>
-          <b>Price: </b>
-          <input
-            name="price"
-            value={this.state.price}
-            onChange={this.handleInputChange}
-            type="text"
-            placeholder="Ціна"
-            required
-          />
-        </label>
-        <br />
-        <label>
-          <b>Discount: </b>
-          <input
-            name="discount"
-            value={this.state.discount}
-            onChange={this.handleInputChange}
-            type="text"
-            placeholder="Знижка"
-          />
-        </label>
-        <br />
-        <button type="submit">Додати продукт</button>
-      </form>
-    );
-  }
+  return (
+    <form onSubmit={handleSubmit}>
+      <h2>Product Form</h2>
+      <label>
+        <b>Title: </b>
+        <input
+          name="title"
+          value={formData.title}
+          onChange={handleInputChange}
+          type="text"
+          placeholder="Назва продукту"
+          required
+        />
+      </label>
+      <br />
+      <label>
+        <b>Price: </b>
+        <input
+          name="price"
+          value={formData.price}
+          onChange={handleInputChange}
+          type="text"
+          placeholder="Ціна"
+          required
+        />
+      </label>
+      <br />
+      <label>
+        <b>Discount: </b>
+        <input
+          name="discount"
+          value={formData.discount}
+          onChange={handleInputChange}
+          type="text"
+          placeholder="Знижка"
+        />
+      </label>
+      <br />
+      <button type="submit">Додати продукт</button>
+    </form>
+  );
 }
+
+ProductForm.propTypes = {
+  onAddProduct: PropTypes.func.isRequired,
+};
 
 export default ProductForm;

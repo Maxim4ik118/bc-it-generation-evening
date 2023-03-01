@@ -1,34 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import ProductList from "./components/ProductList/ProductList";
 import Details from "./components/Details/Details";
-import ProductForm from "./components/ProductForm/ProductForm";
 
-import "./App.css";
 import { requestPostComments, requestPosts } from "./services/api";
-import { CommentsList, ListsContainer, PostsList } from "./App.styled";
 import Loader from "./components/Loader/Loader";
 
-const productsData = [
-  {
-    id: "3", // "3" !== "2" - true
-    title: "Tacos With Lime M",
-    price: 5.85,
-    discount: 15,
-  },
-  {
-    id: "1", // "1" !== "2" - true
-    title: "Tacos With Lime XXL",
-    price: 10.99,
-    discount: 30,
-  },
-  {
-    id: "2", // "2" !== "2" - false
-    title: "Tacos With Lime XL",
-    price: 6.99,
-    discount: false,
-  },
-];
+import "./App.css";
+import { CommentsList, ListsContainer, PostsList } from "./App.styled";
+
+// const productsData = [
+//   {
+//     id: "3", // "3" !== "2" - true
+//     title: "Tacos With Lime M",
+//     price: 5.85,
+//     discount: 15,
+//   },
+//   {
+//     id: "1", // "1" !== "2" - true
+//     title: "Tacos With Lime XXL",
+//     price: 10.99,
+//     discount: 30,
+//   },
+//   {
+//     id: "2", // "2" !== "2" - false
+//     title: "Tacos With Lime XL",
+//     price: 6.99,
+//     discount: false,
+//   },
+// ];
 
 /* 
 
@@ -38,115 +37,165 @@ const productsData = [
 
 */
 
-class App extends React.Component {
-  state = {
-    pressedKey: "",
-    // products: JSON.parse(localStorage.getItem('products')) ?? [],
-    showDetails: false,
-    selectedPostId: null,
-    // page: 1,
-    // query: "",
 
-    posts: null,
-    comments: null,
-    isLoading: false,
-    error: null,
-  };
+const App = () => {
+  const [pressedKey, setPressedKey] = useState("");
+  // const [products, setProducts] = useState(JSON.parse(localStorage.getItem('products')) ?? []);
+  const [showDetails, setShowDetails] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState(null);
 
-  handleLoadMore = () => {
-    this.setState((prev) => ({ page: prev.page + 1 }));
-  };
-  handleSetSearchQuery = (searchTerm) => {
-    this.setState({ query: searchTerm });
-  };
+  const [posts, setPosts] = useState(null);
+  const [comments, setComments] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
+  // useEffect(() => {
+  //   localStorage.setItem('products', products)
+  // }, [products]);
+
+  // state = {
+  //   pressedKey: "",
+  //   products:JSON.parse(localStorage.getItem('products')) ?? [] ,
+  //   showDetails: false,
+  //   selectedPostId: null,
+
+  //   posts: null,
+  //   comments: null,
+  //   isLoading: false,
+  //   error: null,
+  // };
+
+  // componentDidMount() {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       this.setState({ isLoading: true });
+  //       const posts = await requestPosts();
+
+  //       this.setState({ posts });
+  //     } catch (error) {
+  //       this.setState({ error: error.message });
+  //     } finally {
+  //       this.setState({ isLoading: false });
+  //     }
+  //   };
+
+  //   fetchPosts();
+  // }
+
+  useEffect(() => {
     const fetchPosts = async () => {
       try {
-        this.setState({ isLoading: true });
+        setIsLoading(true);
+
         const posts = await requestPosts();
 
-        this.setState({ posts });
+        setPosts(posts);
       } catch (error) {
-        this.setState({ error: error.message });
+        setError(error.message);
       } finally {
-        this.setState({ isLoading: false });
+        setIsLoading(false);
       }
     };
 
     fetchPosts();
-  }
+  }, []);
 
-  componentDidUpdate(_, prevState) {
-    if (
-      prevState.selectedPostId !== this.state.selectedPostId &&
-      this.state.selectedPostId !== null
-    ) {
-      const fetchPostComments = async (postId) => {
-        try {
-          this.setState({ isLoading: true });
-          const comments = await requestPostComments(postId);
 
-          this.setState({ comments });
-        } catch (error) {
-          this.setState({ error: error.message });
-        } finally {
-          this.setState({ isLoading: false });
-        }
-      };
+  useEffect(() => {
+    if(selectedPostId === null) return;
 
-      fetchPostComments(this.state.selectedPostId);
-    }
+    const fetchPostComments = async (postId) => {
+      try {
+        setIsLoading(true)
+        const comments = await requestPostComments(postId);
 
-    // if (prevState.page !== this.state.page || prevState.query !== this.state.query) {
-    //   // Ваш запит на сервер за додатковими картинками
-    // }
-  }
+        setComments(comments);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  handlePressKey = (key) => {
-    this.setState({ pressedKey: key });
+    fetchPostComments(selectedPostId);
+  }, [selectedPostId]);
+
+  // componentDidUpdate(_, prevState) {
+  //   if (
+  //     prevState.selectedPostId !== this.state.selectedPostId &&
+  //     this.state.selectedPostId !== null
+  //   ) {
+  //     const fetchPostComments = async (postId) => {
+  //       try {
+  //         this.setState({ isLoading: true });
+  //         const comments = await requestPostComments(postId);
+
+  //         this.setState({ comments });
+  //       } catch (error) {
+  //         this.setState({ error: error.message });
+  //       } finally {
+  //         this.setState({ isLoading: false });
+  //       }
+  //     };
+
+  //     fetchPostComments(this.state.selectedPostId);
+  //   }
+
+  //   // if (prevState.page !== this.state.page || prevState.query !== this.state.query) {
+  //   //   // Ваш запит на сервер за додатковими картинками
+  //   // }
+  // }
+
+  const handlePressKey = (key) => {
+    // this.setState({ pressedKey: key });
+    setPressedKey(key);
   };
 
-  handleToggleDetails = () => {
-    this.setState({
-      showDetails: !this.state.showDetails,
-    });
+  const handleToggleDetails = () => {
+    // this.setState({
+    //   showDetails: !this.state.showDetails,
+    // });
+
+    setShowDetails(!showDetails);
   };
 
-  handleSelectPostId = (postId) => {
-    if (this.state.selectedPostId === postId) {
-      this.setState({ selectedPostId: null, comments: null });
+  const handleSelectPostId = (postId) => {
+    if (selectedPostId === postId) {
+      // this.setState({ selectedPostId: null, comments: null });
+      setSelectedPostId(null);
+      setComments(null);
     } else {
-      this.setState({ selectedPostId: postId });
+      // this.setState({ selectedPostId: postId });
+      setSelectedPostId(postId);
     }
   };
 
-  render() {
+
     return (
       <div className="App">
-        <button onClick={this.handleToggleDetails}>Toggle details</button>
-        {this.state.showDetails && (
+        <button onClick={handleToggleDetails}>Toggle details</button>
+        {showDetails && (
           <Details
             text="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, numquam!"
-            pressedKey={this.state.pressedKey}
-            handlePressKey={this.handlePressKey}
+            pressedKey={pressedKey}
+            handlePressKey={handlePressKey}
           />
         )}
 
-        {this.state.isLoading && <Loader />}
-        {this.state.error !== null && (
-          <p>Oops, some error occured... {this.state.error}</p>
+        {isLoading && <Loader />}
+        {error !== null && (
+          <p>Oops, some error occured... {error}</p>
         )}
         <ListsContainer>
           <PostsList>
-            {this.state.posts !== null &&
-              this.state.posts.map((post) => {
+            {posts !== null &&
+              posts.map((post) => {
                 return (
                   <li
                     key={post.id}
-                    onClick={() => this.handleSelectPostId(post.id)}
+                    onClick={() => handleSelectPostId(post.id)}
                     className={
-                      this.state.selectedPostId === post.id ? "selected" : ""
+                      selectedPostId === post.id ? "selected" : ""
                     }
                   >
                     <h3>{post.title}</h3>
@@ -165,9 +214,9 @@ class App extends React.Component {
                 );
               })}
           </PostsList>
-          {this.state.comments !== null && (
+          {comments !== null && (
             <CommentsList>
-              {this.state.comments.map((comment) => {
+              {comments.map((comment) => {
                 return (
                   <li key={comment.id}>
                     <h3>{comment.name}</h3>
@@ -186,7 +235,6 @@ class App extends React.Component {
         </ListsContainer>
       </div>
     );
-  }
 }
 
 export default App;

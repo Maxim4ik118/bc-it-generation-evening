@@ -1,63 +1,63 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
-class Details extends Component {
-  onKeyDown = (event) => {
-    this.props.handlePressKey(event.code);
-  }
+const Details = ({ text, pressedKey, handlePressKey }) => {
+  //     Getter  Setter
+  const [count, setCount] = useState(null);
 
-  componentDidMount() {
-    window.addEventListener("keydown", this.onKeyDown)
+  const handleIncrement = () => {
+    setCount(count === null ? 1 : (prevState) => prevState + 1);
+  };
 
-    /* 
-      Метод спрацьовує після успішного 
-      першого рендеру компоненти, та використовується для:
-      
-      1. Встановлення HTTP-запитів на сервер.
-      2. Встановити setTimeout|setInterval
-      3. Встановлення глобальних слухачів подій addEventListener
-      4. Звертатися до зовнішніх АПІ (localStorage)
-    */
-  }
+  const handleDecrement = () => {
+    setCount(count === null ? -1 : (prevState) => prevState - 1);
+  };
 
-  componentDidUpdate(prevProps, prevState) {
-    /* 
-      Метод спрацьовує після оновлення компоненти, 
-      та використовується для:
-      
-      1. Встановлення HTTP-запитів на сервер.
-      2. Звертатися до зовнішніх АПІ (localStorage)
-      3. Відслідкувати яке саме поле в стейті чи пропсах змінилося
-    */
-  }
+  // --- Аналог сomponentDidMount ---
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      handlePressKey(event.code);
+    };
 
-  componentWillUnmount() {
-    window.removeEventListener("keydown", this.onKeyDown)
-    /* 
-      Метод спрацьовує перед повним видаленням 
-      компоненти з ДОМ, та використовується для:
+    window.addEventListener("keydown", onKeyDown);
 
-      1. Відхиляння HTTP-запитів.
-      2. Очищати асинхронні таймери clearTimeout|clearInterval
-      3. Видаляти глобальні слухачі подій removeEventListener
-    */
-  }
+    // --- Аналог componentWillUnmount ---
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [handlePressKey]);
 
-  render() {
-    return (
-      <div>
-        <h2>Details</h2>
-        <p>
-          <b>Text from props:</b> {this?.props?.text}
-          {/* this && this.props && this.props.text*/}
-        </p>
-        <p>
-          <b>Pressed key:</b> {this.props.pressedKey}
-        </p>
-      </div>
-    );
-  }
-}
+  // --- Аналог сomponentDidMount + componentDidUpdate ---
+  useEffect(() => {
+    // Не забути про перевірку на початкове значення
+    // аби функція не спрацьовувала при першому рендері
+    if (count === null) return;
+
+    console.log("Count has changed!", count);
+  }, [count]);
+
+
+  return (
+    <div>
+      <h2>Details</h2>
+      <p>
+        <b>Text from props:</b> {text}
+      </p>
+      <p>
+        <b>Pressed key:</b> {pressedKey}
+      </p>
+      <p>
+        <b>Counter: </b> {count === null ? 0 : count}
+      </p>
+      <button type="button" onClick={handleIncrement}>
+        Increment
+      </button>
+      <button type="button" onClick={handleDecrement}>
+        Decrement
+      </button>
+    </div>
+  );
+};
 
 Details.propTypes = {
   handlePressKey: PropTypes.func.isRequired,
