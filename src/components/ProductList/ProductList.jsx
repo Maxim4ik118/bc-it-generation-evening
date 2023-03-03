@@ -1,12 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { DetailsContext } from '../../context/DetailsContext';
+// import PropTypes from 'prop-types';
 
 import Product from '../Product/Product';
 
-function ProductList({ products, onDeleteProduct }) {
+function ProductList() {
+  const { products, onDeleteProduct } = useContext(DetailsContext);
+
   return (
     <div >
-       {products.map((product) => {
+       {products?.length > 0 && products.map((product) => {
           return (
               <Product
                 key={product.id}
@@ -23,15 +26,15 @@ function ProductList({ products, onDeleteProduct }) {
 }
 
 ProductList.propTypes = {
-    products: PropTypes.arrayOf(
-        PropTypes.shape({
-            id: PropTypes.string.isRequired,
-            title: PropTypes.string.isRequired,
-            price: PropTypes.number.isRequired,
-            discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
-        }).isRequired
-    ).isRequired,
-    onDeleteProduct: PropTypes.func
+    // products: PropTypes.arrayOf(
+    //     PropTypes.shape({
+    //         id: PropTypes.string.isRequired,
+    //         title: PropTypes.string.isRequired,
+    //         price: PropTypes.number.isRequired,
+    //         discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
+    //     }).isRequired
+    // ).isRequired,
+    // onDeleteProduct: PropTypes.func
 }
 
 export default ProductList;

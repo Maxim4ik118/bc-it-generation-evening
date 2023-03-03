@@ -1,22 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import PropTypes from "prop-types";
 
-const Details = ({ text, pressedKey, handlePressKey }) => {
-  //     Getter  Setter
-  const [count, setCount] = useState(null);
+import { DetailsContext } from "../../context/DetailsContext";
 
-  const handleIncrement = () => {
-    setCount(count === null ? 1 : (prevState) => prevState + 1);
-  };
-
-  const handleDecrement = () => {
-    setCount(count === null ? -1 : (prevState) => prevState - 1);
-  };
+const Details = ({ text }) => {
+  const { pressedKey , setPressedKey } = useContext(DetailsContext);
 
   // --- Аналог сomponentDidMount ---
   useEffect(() => {
     const onKeyDown = (event) => {
-      handlePressKey(event.code);
+      setPressedKey(event.code);
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -25,16 +18,7 @@ const Details = ({ text, pressedKey, handlePressKey }) => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [handlePressKey]);
-
-  // --- Аналог сomponentDidMount + componentDidUpdate ---
-  useEffect(() => {
-    // Не забути про перевірку на початкове значення
-    // аби функція не спрацьовувала при першому рендері
-    if (count === null) return;
-
-    console.log("Count has changed!", count);
-  }, [count]);
+  }, [setPressedKey]);
 
 
   return (
@@ -46,23 +30,12 @@ const Details = ({ text, pressedKey, handlePressKey }) => {
       <p>
         <b>Pressed key:</b> {pressedKey}
       </p>
-      <p>
-        <b>Counter: </b> {count === null ? 0 : count}
-      </p>
-      <button type="button" onClick={handleIncrement}>
-        Increment
-      </button>
-      <button type="button" onClick={handleDecrement}>
-        Decrement
-      </button>
     </div>
   );
 };
 
 Details.propTypes = {
-  handlePressKey: PropTypes.func.isRequired,
   text: PropTypes.string.isRequired,
-  pressedKey: PropTypes.string.isRequired,
 };
 
 export default Details;

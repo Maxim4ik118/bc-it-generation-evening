@@ -1,30 +1,23 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useContext, useRef, useState } from "react";
+// import PropTypes from "prop-types";
+import { DetailsContext } from "../../context/DetailsContext";
 
-function ProductForm({ onAddProduct }) {
-  const [formData, setFormData] = useState({
-    price: "",
-    discount: "",
-    title: "",
-  });
-
-  const handleInputChange = ({ target: { name, value } }) => {
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+function ProductForm() {
+  const { onAddProduct } = useContext(DetailsContext);
+  const titleInputRef = useRef();
+  const priceInputRef = useRef();
+  const discountInputRef = useRef();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const product = {
-      title: formData.title,
-      price: Number.parseFloat(formData.price),
+      title: titleInputRef.current.value,
+      price: Number.parseFloat(priceInputRef.current.value),
       discount:
-        formData.discount.length === 0
+        discountInputRef.current.value.length === 0
           ? false
-          : Number.parseInt(formData.discount),
+          : Number.parseInt(discountInputRef.current.value),
     };
 
     const isSuccess = onAddProduct(product);
@@ -35,11 +28,9 @@ function ProductForm({ onAddProduct }) {
   };
 
   const reset = () => {
-    setFormData({
-      title: "",
-      price: "",
-      discount: "",
-    })
+    titleInputRef.current.value = '';
+    priceInputRef.current.value = '';
+    discountInputRef.current.value = '';
   };
 
   return (
@@ -48,9 +39,8 @@ function ProductForm({ onAddProduct }) {
       <label>
         <b>Title: </b>
         <input
+          ref={titleInputRef}
           name="title"
-          value={formData.title}
-          onChange={handleInputChange}
           type="text"
           placeholder="Назва продукту"
           required
@@ -61,8 +51,7 @@ function ProductForm({ onAddProduct }) {
         <b>Price: </b>
         <input
           name="price"
-          value={formData.price}
-          onChange={handleInputChange}
+          ref={priceInputRef}
           type="text"
           placeholder="Ціна"
           required
@@ -73,8 +62,7 @@ function ProductForm({ onAddProduct }) {
         <b>Discount: </b>
         <input
           name="discount"
-          value={formData.discount}
-          onChange={handleInputChange}
+          ref={discountInputRef}
           type="text"
           placeholder="Знижка"
         />
@@ -85,8 +73,6 @@ function ProductForm({ onAddProduct }) {
   );
 }
 
-ProductForm.propTypes = {
-  onAddProduct: PropTypes.func.isRequired,
-};
+ProductForm.propTypes = {};
 
 export default ProductForm;
