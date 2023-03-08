@@ -1,4 +1,19 @@
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+
+export const StyledNavLink = styled(NavLink)`
+  display: inline-block;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding: 15px;
+  transition: all .3s;
+  color: black;
+
+  &.active {
+    color: blue;
+    border-bottom: 2px solid blue;
+  }
+`
 
 export const ListsContainer = styled.div`
   display: flex;
@@ -22,10 +37,13 @@ export const PostsList = styled.ul`
     background: transparent;
   }
   & li {
-    padding: 15px;
     border: 2px solid gray;
     transition: all .3s;
     margin-bottom: 15px;
+    a {
+      padding: 15px;
+      display: block;
+    }
     &.selected {
       border: 2px solid yellow;
     }

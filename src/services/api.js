@@ -10,6 +10,12 @@ export const requestPosts = async () => {
   return data;
 };
 
+export const requestPostDetails = async (postId) => {
+  const { data } = await axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`);
+
+  return data;
+};
+
 export const requestPostComments = async (postId) => {
     const { data } = await axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}/comments`);
   

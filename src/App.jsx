@@ -1,15 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
+import { NavLink, Route, Routes } from "react-router-dom";
 
-import Details from "./components/Details/Details";
+// import Details from "./components/Details/Details";
+import Loader from "./components/Loader/Loader";
+// import ProductForm from "./components/ProductForm/ProductForm";
+// import ProductList from "./components/ProductList/ProductList";
 
 import { requestPostComments, requestPosts } from "./services/api";
-import Loader from "./components/Loader/Loader";
-
-import "./App.css";
-import { CommentsList, ListsContainer, PostsList } from "./App.styled";
 import { DetailsContext } from "./context/DetailsContext";
-import ProductForm from "./components/ProductForm/ProductForm";
-import ProductList from "./components/ProductList/ProductList";
+
+import {
+  CommentsList,
+  ListsContainer,
+  PostsList,
+  StyledNavLink,
+} from "./App.styled";
+import "./App.css";
+import HomePage from "./pages/HomePage";
+import SearchPostsPage from "./pages/SearchPostsPage";
+import PostsPage from "./pages/PostsPage";
+import PostDetailsPage from "./pages/PostDetailsPage";
 
 // const productsData = [
 //   {
@@ -40,123 +50,38 @@ import ProductList from "./components/ProductList/ProductList";
 
 */
 
+/*
+Робота з Маршрутеризацією:
+1. Розбити наш додаток на сторінки (pages), 
+  та створити відповідні компоненти сторінок
+2. Обгорнути весь додаток <App /> в компонент 
+  BrowserRouter, та не забути додати basename 
+  перед деплоєм на гітхаб
+3. Прописати навігацію на інші сторінки з допомогою
+  Link | NavLink
+4. Прописати маршрути Route під відповідні адреси
+  та підставити відповідні компоненти.
+5. Ми маємо згенерувати унікальні маршрути для наших сутностей
+6. Потрібно прописати шаблон адреси для Route, який буде реагувати
+   на динамічні параметри -> path="/posts/:postId", де postId - динамічний
+   параметр
+*/
+
 const App = () => {
- const [selectedPostId, setSelectedPostId] = useState(null);
-
-  const [posts, setPosts] = useState(null);
-  const [comments, setComments] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const { showDetails, setShowDetails } = useContext(DetailsContext);
-
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-
-        const posts = await requestPosts();
-
-        setPosts(posts);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  useEffect(() => {
-    if (selectedPostId === null) return;
-
-    const fetchPostComments = async (postId) => {
-      try {
-        setIsLoading(true);
-        const comments = await requestPostComments(postId);
-
-        setComments(comments);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchPostComments(selectedPostId);
-  }, [selectedPostId]);
-
-  const handleSelectPostId = (postId) => {
-    if (selectedPostId === postId) {
-      setSelectedPostId(null);
-      setComments(null);
-    } else {
-      setSelectedPostId(postId);
-    }
-  };
-
   return (
     <div className="App">
-      <button onClick={() => setShowDetails((prev) => !prev)}>
-        Toggle details
-      </button>
-      {showDetails && (
-        <Details text="Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus, numquam!" />
-      )}
+      <nav>
+        <StyledNavLink to="/">Home</StyledNavLink>
+        <StyledNavLink to="/search">Search Post</StyledNavLink>
+        <StyledNavLink to="/posts">All Posts</StyledNavLink>
+      </nav>
 
-      <ProductForm />
-      <ProductList />
-
-
-      {isLoading && <Loader />}
-      {error !== null && <p>Oops, some error occured... {error}</p>}
-      <ListsContainer>
-        <PostsList>
-          {posts !== null &&
-            posts.map((post) => {
-              return (
-                <li
-                  key={post.id}
-                  onClick={() => handleSelectPostId(post.id)}
-                  className={selectedPostId === post.id ? "selected" : ""}
-                >
-                  <h3>{post.title}</h3>
-                  <p>
-                    <b>Body:</b> {post.body}
-                  </p>
-                  <p>
-                    <b>PostId:</b>
-                    {post.id}
-                  </p>
-                  <p>
-                    <b>UserID:</b>
-                    {post.userId}
-                  </p>
-                </li>
-              );
-            })}
-        </PostsList>
-        {comments !== null && (
-          <CommentsList>
-            {comments.map((comment) => {
-              return (
-                <li key={comment.id}>
-                  <h3>{comment.name}</h3>
-                  <p>
-                    <b>Email: </b> {comment.email}
-                  </p>
-                  <p>
-                    <b>Body: </b>
-                    <i>{comment.body}</i>
-                  </p>
-                </li>
-              );
-            })}
-          </CommentsList>
-        )}
-      </ListsContainer>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPostsPage />} />
+        <Route path="/posts" element={<PostsPage />} />
+        <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
+      </Routes>
     </div>
   );
 };
