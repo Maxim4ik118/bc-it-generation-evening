@@ -1,15 +1,19 @@
-import React, { useContext, useEffect } from "react";
+import React, {  useEffect } from "react";
 import PropTypes from "prop-types";
 
-import { DetailsContext } from "../../context/DetailsContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setPressedKey } from "../../redux/store";
 
 const Details = ({ text }) => {
-  const { pressedKey , setPressedKey } = useContext(DetailsContext);
+  // const { pressedKey , setPressedKey } = useContext(DetailsContext);
+  const pressedKey = useSelector((state) => state.pressedKey);
+  const dispatch = useDispatch();
 
   // --- Аналог сomponentDidMount ---
   useEffect(() => {
     const onKeyDown = (event) => {
-      setPressedKey(event.code);
+      // setPressedKey(event.code);
+      dispatch(setPressedKey(event.code));
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -18,7 +22,7 @@ const Details = ({ text }) => {
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [setPressedKey]);
+  }, [dispatch]);
 
 
   return (

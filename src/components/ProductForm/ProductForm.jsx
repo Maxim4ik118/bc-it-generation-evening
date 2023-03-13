@@ -1,9 +1,11 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef } from "react";
+import { useDispatch } from "react-redux";
 // import PropTypes from "prop-types";
-import { DetailsContext } from "../../context/DetailsContext";
+import { addProduct } from "../../redux/store";
 
 function ProductForm() {
-  const { onAddProduct } = useContext(DetailsContext);
+  // const { onAddProduct } = useContext(DetailsContext);
+  const dispatch = useDispatch();
   const titleInputRef = useRef();
   const priceInputRef = useRef();
   const discountInputRef = useRef();
@@ -20,17 +22,16 @@ function ProductForm() {
           : Number.parseInt(discountInputRef.current.value),
     };
 
-    const isSuccess = onAddProduct(product);
+    // dispatch(addProduct(product));
+    dispatch(addProduct(product));
 
-    if (isSuccess === 1) {
-      reset();
-    }
+    reset();
   };
 
   const reset = () => {
-    titleInputRef.current.value = '';
-    priceInputRef.current.value = '';
-    discountInputRef.current.value = '';
+    titleInputRef.current.value = "";
+    priceInputRef.current.value = "";
+    discountInputRef.current.value = "";
   };
 
   return (

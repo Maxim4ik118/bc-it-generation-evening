@@ -1,24 +1,33 @@
-import React, { useContext } from 'react';
-import { DetailsContext } from '../../context/DetailsContext';
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteProduct } from "../../redux/store";
+
 // import PropTypes from 'prop-types';
 
-import Product from '../Product/Product';
+import Product from "../Product/Product";
 
 function ProductList() {
-  const { products, onDeleteProduct } = useContext(DetailsContext);
+  // const { products, onDeleteProduct } = useContext(DetailsContext);
+  const products = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+
+  const onDeleteProduct = (productId) => {
+    dispatch(deleteProduct(productId));
+  };
 
   return (
-    <div >
-       {products?.length > 0 && products.map((product) => {
+    <div>
+      {products?.length > 0 &&
+        products.map((product) => {
           return (
-              <Product
-                key={product.id}
-                id={product.id}
-                discount={product.discount}
-                title={product.title}
-                price={product.price}
-                onDeleteProduct={onDeleteProduct}
-              />
+            <Product
+              key={product.id}
+              id={product.id}
+              discount={product.discount}
+              title={product.title}
+              price={product.price}
+              onDeleteProduct={onDeleteProduct}
+            />
           );
         })}
     </div>
@@ -26,15 +35,15 @@ function ProductList() {
 }
 
 ProductList.propTypes = {
-    // products: PropTypes.arrayOf(
-    //     PropTypes.shape({
-    //         id: PropTypes.string.isRequired,
-    //         title: PropTypes.string.isRequired,
-    //         price: PropTypes.number.isRequired,
-    //         discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
-    //     }).isRequired
-    // ).isRequired,
-    // onDeleteProduct: PropTypes.func
-}
+  // products: PropTypes.arrayOf(
+  //     PropTypes.shape({
+  //         id: PropTypes.string.isRequired,
+  //         title: PropTypes.string.isRequired,
+  //         price: PropTypes.number.isRequired,
+  //         discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
+  //     }).isRequired
+  // ).isRequired,
+  // onDeleteProduct: PropTypes.func
+};
 
 export default ProductList;

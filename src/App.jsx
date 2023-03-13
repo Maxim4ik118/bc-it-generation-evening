@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import { Loader, Product, ProductForm, ProductList } from "./components";
+import { Details, Loader, Product, ProductForm, ProductList } from "./components";
 
 // import HomePage from "./pages/HomePage";
 // import SearchPostsPage from "./pages/SearchPostsPage";
@@ -10,6 +10,8 @@ import { Loader, Product, ProductForm, ProductList } from "./components";
 
 import { StyledNavLink } from "./App.styled";
 import "./App.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setToggleShowDetails } from "./redux/store";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
@@ -62,7 +64,16 @@ const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
    параметр
 */
 
+
+
 const App = () => {
+  const showDetails = useSelector((state) => state.showDetails);
+  const dispatch = useDispatch();
+
+  const handleToggleDetails = () => {
+    dispatch(setToggleShowDetails());
+  }
+
   return (
     <div className="App">
       <nav>
@@ -70,9 +81,11 @@ const App = () => {
         <StyledNavLink to="/search">Search Post</StyledNavLink>
         <StyledNavLink to="/posts">All Posts</StyledNavLink>
       </nav>
-    <Product/>
-    <ProductForm/> 
-    <ProductList/>
+
+      <button onClick={handleToggleDetails}>Toggle details</button>
+      {showDetails && <Details text="Awee wadaw wd awd awdwwd"/>}
+      <ProductForm/> 
+      <ProductList/>
 
       <Suspense fallback={<Loader />}>
         <Routes>
