@@ -10,6 +10,12 @@ export const requestPosts = async () => {
   return data;
 };
 
+export const requestPostsBySearchTerm = async (searchTerm) => {
+  const { data } = await axios.get(`https://jsonplaceholder.typicode.com/posts/${searchTerm}`);
+
+  return data;
+};
+
 export const requestPostDetails = async (postId) => {
   const { data } = await axios.get(`https://jsonplaceholder.typicode.com/posts/${postId}`);
 

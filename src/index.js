@@ -13,7 +13,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter
     // перед вивантаженням на гітхаб
-    // basename="/react-homework-template/"
+    // basename="/goit-react-homework-05/"
     >
       <DetailsProvider>
         <App />

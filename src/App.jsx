@@ -1,25 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { NavLink, Route, Routes } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 
-// import Details from "./components/Details/Details";
-import Loader from "./components/Loader/Loader";
-// import ProductForm from "./components/ProductForm/ProductForm";
-// import ProductList from "./components/ProductList/ProductList";
+import { Loader, Product, ProductForm, ProductList } from "./components";
 
-import { requestPostComments, requestPosts } from "./services/api";
-import { DetailsContext } from "./context/DetailsContext";
+// import HomePage from "./pages/HomePage";
+// import SearchPostsPage from "./pages/SearchPostsPage";
+// import PostsPage from "./pages/PostsPage";
+// import PostDetailsPage from "./pages/PostDetailsPage";
 
-import {
-  CommentsList,
-  ListsContainer,
-  PostsList,
-  StyledNavLink,
-} from "./App.styled";
+import { StyledNavLink } from "./App.styled";
 import "./App.css";
-import HomePage from "./pages/HomePage";
-import SearchPostsPage from "./pages/SearchPostsPage";
-import PostsPage from "./pages/PostsPage";
-import PostDetailsPage from "./pages/PostDetailsPage";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
+const PostsPage = lazy(() => import("./pages/PostsPage"));
+const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
 
 // const productsData = [
 //   {
@@ -75,13 +70,18 @@ const App = () => {
         <StyledNavLink to="/search">Search Post</StyledNavLink>
         <StyledNavLink to="/posts">All Posts</StyledNavLink>
       </nav>
+    <Product/>
+    <ProductForm/> 
+    <ProductList/>
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPostsPage />} />
-        <Route path="/posts" element={<PostsPage />} />
-        <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
-      </Routes>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/search" element={<SearchPostsPage />} />
+          <Route path="/posts" element={<PostsPage />} />
+          <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 };

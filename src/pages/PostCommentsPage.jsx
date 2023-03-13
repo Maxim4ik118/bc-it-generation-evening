@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { CommentsList } from "../App.styled";
-import Loader from "../components/Loader/Loader";
 import { requestPostComments } from "../services/api";
+
+
+import { CommentsList } from "../App.styled";
+import { Loader } from "../components";
 
 function PostCommentsPage() {
   const [comments, setComments] = useState(null);

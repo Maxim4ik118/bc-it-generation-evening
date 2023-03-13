@@ -1,18 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, Route, Routes, useParams } from "react-router-dom";
+import React, { lazy, Suspense, useEffect, useState } from "react";
+import {
+  Link,
+  NavLink,
+  Route,
+  Routes,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 
-import Loader from "../components/Loader/Loader";
+import { Loader } from "../components";
+// import Loader from "../components/Loader/Loader";
 import { requestPostDetails } from "../services/api";
-import PostCommentsPage from "./PostCommentsPage";
+// import PostCommentsPage from "./PostCommentsPage";
+
+const PostCommentsPage = lazy(() => import("./PostCommentsPage"));
 
 function PostDetailsPage() {
   const [details, setDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const location = useLocation();
+
   const { postId } = useParams();
 
   useEffect(() => {
-    if(!postId) return;
+    if (!postId) return;
 
     const fetchPostDetails = async (postId) => {
       try {
@@ -30,14 +42,15 @@ function PostDetailsPage() {
 
     fetchPostDetails(postId);
   }, [postId]);
-  
-  
+
+  const backLinkHref = location.state?.from ?? "/posts";
 
   return (
     <div>
       {isLoading && <Loader />}
       {error !== null && <p>Oops, some error occured... Message: {error}</p>}
       <h1>PostDetails</h1>
+      <Link to={backLinkHref}>Go back</Link>
       <br />
       Current postId: {postId}
       {Boolean(details) && (
@@ -50,12 +63,14 @@ function PostDetailsPage() {
           </p>
         </div>
       )}
-
-      <NavLink to="comments">Comments</NavLink>
-
-      <Routes>
-        <Route path="comments" element={<PostCommentsPage />} />
-      </Routes>
+      <NavLink state={{ from: location.state?.from }} to="comments">
+        Comments
+      </NavLink>
+      <Suspense fallback={<Loader />}>
+        <Routes>
+          <Route path="comments" element={<PostCommentsPage />} />
+        </Routes>
+      </Suspense>
     </div>
   );
 }
