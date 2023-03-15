@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 // import PropTypes from "prop-types";
-import { addProduct } from "../../redux/store";
+import { addProduct } from "../../redux/productSlice";
 
 function ProductForm() {
   // const { onAddProduct } = useContext(DetailsContext);

@@ -2,11 +2,11 @@ import React, {  useEffect } from "react";
 import PropTypes from "prop-types";
 
 import { useDispatch, useSelector } from "react-redux";
-import { setPressedKey } from "../../redux/store";
+import { setPressedKey } from "../../redux/productSlice";
 
 const Details = ({ text }) => {
   // const { pressedKey , setPressedKey } = useContext(DetailsContext);
-  const pressedKey = useSelector((state) => state.pressedKey);
+  const pressedKey = useSelector((state) => state.products.pressedKey);
   const dispatch = useDispatch();
 
   // --- Аналог сomponentDidMount ---

@@ -1,17 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 
 import Loader from "../components/Loader/Loader";
 import { requestPostsBySearchTerm } from "../services/api";
 
 import { PostsList } from "../App.styled";
+import { useDispatch, useSelector } from "react-redux";
+import { setError, setIsLoading, setPosts } from "../redux/postsSlice";
 
 function SearchPostsPage() {
-  const [posts, setPosts] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const posts = useSelector((state) => state.postsData.posts);
+  const isLoading = useSelector((state) => state.postsData.isLoading);
+  const error = useSelector((state) => state.postsData.error);
+  const dispatch = useDispatch();
   const location = useLocation();
-  console.log("location: ", location); // CTRL + SHIFT + L
   const searchInputRef = useRef();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -22,20 +24,20 @@ function SearchPostsPage() {
 
     const fetchPosts = async (queryValue) => {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
 
         const post = await requestPostsBySearchTerm(queryValue); // {id: ..., title: ..., body: ...,}
 
-        setPosts([post]);
+        dispatch(setPosts([post]));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     };
 
     fetchPosts(queryValue);
-  }, [queryValue]);
+  }, [dispatch, queryValue]);
 
   const handleSubmit = (event) => {
     event.preventDefault();

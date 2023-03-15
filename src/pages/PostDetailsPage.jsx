@@ -1,4 +1,5 @@
-import React, { lazy, Suspense, useEffect, useState } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Link,
   NavLink,
@@ -9,6 +10,7 @@ import {
 } from "react-router-dom";
 
 import { Loader } from "../components";
+import { setDetails, setError, setIsLoading } from "../redux/postsSlice";
 // import Loader from "../components/Loader/Loader";
 import { requestPostDetails } from "../services/api";
 // import PostCommentsPage from "./PostCommentsPage";
@@ -16,9 +18,10 @@ import { requestPostDetails } from "../services/api";
 const PostCommentsPage = lazy(() => import("./PostCommentsPage"));
 
 function PostDetailsPage() {
-  const [details, setDetails] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const details = useSelector((state) => state.postsData.postDetails);
+  const isLoading = useSelector((state) => state.postsData.isLoading);
+  const error = useSelector((state) => state.postsData.error);
+  const dispatch = useDispatch();
   const location = useLocation();
 
   const { postId } = useParams();
@@ -28,20 +31,20 @@ function PostDetailsPage() {
 
     const fetchPostDetails = async (postId) => {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
 
         const details = await requestPostDetails(postId);
 
-        setDetails(details);
+        dispatch(setDetails(details));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     };
 
     fetchPostDetails(postId);
-  }, [postId]);
+  }, [dispatch, postId]);
 
   const backLinkHref = location.state?.from ?? "/posts";
 

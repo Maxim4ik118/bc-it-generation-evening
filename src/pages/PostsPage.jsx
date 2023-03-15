@@ -1,34 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import Loader from "../components/Loader/Loader";
 
 import { requestPosts } from "../services/api";
+import { setError, setIsLoading, setPosts } from "../redux/postsSlice";
 
 import { PostsList } from "../App.styled";
 
 function PostsPage() {
-  const [posts, setPosts] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
+  const posts = useSelector((state) => state.postsData.posts);
+  const isLoading = useSelector((state) => state.postsData.isLoading);
+  const error = useSelector((state) => state.postsData.error);
+  const dispatch = useDispatch();
+  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
 
         const posts = await requestPosts();
 
-        setPosts(posts);
+        dispatch(setPosts(posts));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     };
 
     fetchPosts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>

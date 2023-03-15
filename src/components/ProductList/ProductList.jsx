@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteProduct } from "../../redux/store";
+import { deleteProduct } from "../../redux/productSlice";
 
 // import PropTypes from 'prop-types';
 
@@ -8,7 +8,7 @@ import Product from "../Product/Product";
 
 function ProductList() {
   // const { products, onDeleteProduct } = useContext(DetailsContext);
-  const products = useSelector((state) => state.products);
+  const products = useSelector((state) => state.products.products);
   const dispatch = useDispatch();
 
   const onDeleteProduct = (productId) => {

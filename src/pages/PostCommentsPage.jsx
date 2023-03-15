@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { requestPostComments } from "../services/api";
 
 
 import { CommentsList } from "../App.styled";
 import { Loader } from "../components";
+import { useDispatch, useSelector } from "react-redux";
+import { setComments, setError, setIsLoading } from "../redux/postsSlice";
 
 function PostCommentsPage() {
-  const [comments, setComments] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const comments = useSelector((state) => state.postsData.comments)
+  const isLoading = useSelector((state) => state.postsData.isLoading);
+  const error = useSelector((state) => state.postsData.error);
+  const dispatch = useDispatch();
   const { postId } = useParams();
 
   useEffect(() => {
@@ -17,20 +20,20 @@ function PostCommentsPage() {
 
     const fetchComments = async (postId) => {
       try {
-        setIsLoading(true);
+        dispatch(setIsLoading(true));
   
         const comments = await requestPostComments(postId);
   
-        setComments(comments);
+        dispatch(setComments(comments));
       } catch (error) {
-        setError(error.message);
+        dispatch(setError(error.message));
       } finally {
-        setIsLoading(false);
+        dispatch(setIsLoading(false));
       }
     }
 
     fetchComments(postId);
-  }, [postId]);
+  }, [dispatch, postId]);
 
   return (
     <div>

@@ -1,17 +1,17 @@
 import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
-import { Details, Loader, Product, ProductForm, ProductList } from "./components";
+import { Details, Loader, ProductForm, ProductList } from "./components";
 
 // import HomePage from "./pages/HomePage";
 // import SearchPostsPage from "./pages/SearchPostsPage";
 // import PostsPage from "./pages/PostsPage";
 // import PostDetailsPage from "./pages/PostDetailsPage";
+import { setToggleShowDetails } from "./redux/productSlice";
 
 import { StyledNavLink } from "./App.styled";
 import "./App.css";
-import { useDispatch, useSelector } from "react-redux";
-import { setToggleShowDetails } from "./redux/store";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
@@ -67,7 +67,7 @@ const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
 
 
 const App = () => {
-  const showDetails = useSelector((state) => state.showDetails);
+  const showDetails = useSelector((state) => state.products.showDetails);
   const dispatch = useDispatch();
 
   const handleToggleDetails = () => {
