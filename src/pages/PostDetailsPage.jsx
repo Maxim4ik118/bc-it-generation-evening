@@ -10,10 +10,9 @@ import {
 } from "react-router-dom";
 
 import { Loader } from "../components";
-import { setDetails, setError, setIsLoading } from "../redux/postsSlice";
-// import Loader from "../components/Loader/Loader";
-import { requestPostDetails } from "../services/api";
-// import PostCommentsPage from "./PostCommentsPage";
+import {
+  fetchPostDetails,
+} from "../redux/postsSlice";
 
 const PostCommentsPage = lazy(() => import("./PostCommentsPage"));
 
@@ -29,21 +28,7 @@ function PostDetailsPage() {
   useEffect(() => {
     if (!postId) return;
 
-    const fetchPostDetails = async (postId) => {
-      try {
-        dispatch(setIsLoading(true));
-
-        const details = await requestPostDetails(postId);
-
-        dispatch(setDetails(details));
-      } catch (error) {
-        dispatch(setError(error.message));
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-
-    fetchPostDetails(postId);
+    dispatch(fetchPostDetails(postId));
   }, [dispatch, postId]);
 
   const backLinkHref = location.state?.from ?? "/posts";

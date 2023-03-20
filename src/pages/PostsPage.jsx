@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Loader from "../components/Loader/Loader";
 
-import { requestPosts } from "../services/api";
-import { setError, setIsLoading, setPosts } from "../redux/postsSlice";
+import { fetchPosts } from "../redux/postsSlice";
 
 import { PostsList } from "../App.styled";
 
@@ -14,23 +13,9 @@ function PostsPage() {
   const isLoading = useSelector((state) => state.postsData.isLoading);
   const error = useSelector((state) => state.postsData.error);
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        dispatch(setIsLoading(true));
-
-        const posts = await requestPosts();
-
-        dispatch(setPosts(posts));
-      } catch (error) {
-        dispatch(setError(error.message));
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-
-    fetchPosts();
+    dispatch(fetchPosts());
   }, [dispatch]);
 
   return (

@@ -6,7 +6,7 @@ import { requestPostsBySearchTerm } from "../services/api";
 
 import { PostsList } from "../App.styled";
 import { useDispatch, useSelector } from "react-redux";
-import { setError, setIsLoading, setPosts } from "../redux/postsSlice";
+import { fetchPostsBySearchTerm, setError, setIsLoading, setPosts } from "../redux/postsSlice";
 
 function SearchPostsPage() {
   const posts = useSelector((state) => state.postsData.posts);
@@ -22,21 +22,7 @@ function SearchPostsPage() {
   useEffect(() => {
     if (!queryValue) return;
 
-    const fetchPosts = async (queryValue) => {
-      try {
-        dispatch(setIsLoading(true));
-
-        const post = await requestPostsBySearchTerm(queryValue); // {id: ..., title: ..., body: ...,}
-
-        dispatch(setPosts([post]));
-      } catch (error) {
-        dispatch(setError(error.message));
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-
-    fetchPosts(queryValue);
+    dispatch(fetchPostsBySearchTerm(queryValue));
   }, [dispatch, queryValue]);
 
   const handleSubmit = (event) => {

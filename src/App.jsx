@@ -84,8 +84,8 @@ const App = () => {
 
       <button onClick={handleToggleDetails}>Toggle details</button>
       {showDetails && <Details text="Awee wadaw wd awd awdwwd"/>}
-      <ProductForm/> 
-      <ProductList/>
+      {/* <ProductForm/> 
+      <ProductList/> */}
 
       <Suspense fallback={<Loader />}>
         <Routes>

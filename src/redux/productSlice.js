@@ -41,50 +41,11 @@ const productsSlice = createSlice({
 });
 
 // Генератори екшенів
-export const { setToggleShowDetails, deleteProduct, addProduct, setPressedKey } =
-  productsSlice.actions;
+export const {
+  setToggleShowDetails,
+  deleteProduct,
+  addProduct,
+  setPressedKey,
+} = productsSlice.actions;
 // Редюсер слайсу
 export const productsReducer = productsSlice.reducer;
-
-// export const productsReducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case "userAction/setToggleShowDetails": {
-//       return {
-//         ...state,
-//         showDetails: !state.showDetails,
-//       };
-//     }
-//     case "products/deleteProduct": {
-//       return {
-//         ...state,
-//         products: state.products.filter(
-//           (product) => product.id !== action.payload
-//         ),
-//       };
-//     }
-//     case "userAction/setPressedKey": {
-//       return {
-//         ...state,
-//         pressedKey: action.payload,
-//       };
-//     }
-//     case "products/addProduct": {
-//       if (state.products.some((p) => p.title === action.payload.title)) {
-//         alert(`Oops, product ${action.payload.title} is already in your list`);
-//         return state;
-//       }
-
-//       const finalProduct = {
-//         id: (Math.random() * 100).toString(),
-//         ...action.payload,
-//       };
-
-//       return {
-//         ...state,
-//         products: [finalProduct, ...state.products],
-//       };
-//     }
-//     default:
-//       return state;
-//   }
-// };
