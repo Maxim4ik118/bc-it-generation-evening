@@ -8,10 +8,11 @@ import { Details, Loader, ProductForm, ProductList } from "./components";
 // import SearchPostsPage from "./pages/SearchPostsPage";
 // import PostsPage from "./pages/PostsPage";
 // import PostDetailsPage from "./pages/PostDetailsPage";
-import { setToggleShowDetails } from "./redux/productSlice";
+import { setFilterTerm, setToggleShowDetails } from "./redux/productSlice";
 
 import { StyledNavLink } from "./App.styled";
 import "./App.css";
+import { selectFilterTerm, selectShowDetails } from "./redux/selectors";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
@@ -64,14 +65,25 @@ const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
    параметр
 */
 
+/*
+у мене питання трішки не по темі: 
+як налаштувати автоімпорт у файлах .tx  та .tsx? 
+ Бо тепер він працює якось дуже вибірково
 
+
+*/
 
 const App = () => {
-  const showDetails = useSelector((state) => state.products.showDetails);
+  const showDetails = useSelector(selectShowDetails);
+  const filterTerm = useSelector(selectFilterTerm);
   const dispatch = useDispatch();
 
   const handleToggleDetails = () => {
     dispatch(setToggleShowDetails());
+  };
+
+  const handleFilterInput = ({ target: { value } }) => {
+    dispatch(setFilterTerm(value));
   }
 
   return (
@@ -83,9 +95,11 @@ const App = () => {
       </nav>
 
       <button onClick={handleToggleDetails}>Toggle details</button>
-      {showDetails && <Details text="Awee wadaw wd awd awdwwd"/>}
-      {/* <ProductForm/> 
-      <ProductList/> */}
+      {showDetails && <Details text="Awee wadaw wd awd awdwwd" />}
+      <ProductForm />
+      <p>Find product by name:</p>
+      <input onChange={handleFilterInput} value={filterTerm} type="text"  />
+      <ProductList />
 
       <Suspense fallback={<Loader />}>
         <Routes>

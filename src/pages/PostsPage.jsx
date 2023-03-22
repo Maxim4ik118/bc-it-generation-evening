@@ -7,12 +7,13 @@ import Loader from "../components/Loader/Loader";
 import { fetchPosts } from "../redux/postsSlice";
 
 import { PostsList } from "../App.styled";
+import { selectIsLoadingPosts, selectPosts, selectPostsError } from "../redux/selectors";
 
 function PostsPage() {
-  const posts = useSelector((state) => state.postsData.posts);
-  const isLoading = useSelector((state) => state.postsData.isLoading);
-  const error = useSelector((state) => state.postsData.error);
   const dispatch = useDispatch();
+  const posts = useSelector(selectPosts);
+  const isLoading = useSelector(selectIsLoadingPosts);
+  const error = useSelector(selectPostsError);
 
   useEffect(() => {
     dispatch(fetchPosts());

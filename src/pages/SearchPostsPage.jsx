@@ -1,18 +1,20 @@
 import React, { useEffect, useRef } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 import Loader from "../components/Loader/Loader";
-import { requestPostsBySearchTerm } from "../services/api";
+
+import { selectIsLoadingPosts, selectPosts, selectPostsError } from "../redux/selectors";
+import { fetchPostsBySearchTerm } from "../redux/postsSlice";
 
 import { PostsList } from "../App.styled";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchPostsBySearchTerm, setError, setIsLoading, setPosts } from "../redux/postsSlice";
 
 function SearchPostsPage() {
-  const posts = useSelector((state) => state.postsData.posts);
-  const isLoading = useSelector((state) => state.postsData.isLoading);
-  const error = useSelector((state) => state.postsData.error);
   const dispatch = useDispatch();
+  const posts = useSelector(selectPosts);
+  const isLoading = useSelector(selectIsLoadingPosts);
+  const error = useSelector(selectPostsError);
+  
   const location = useLocation();
   const searchInputRef = useRef();
 

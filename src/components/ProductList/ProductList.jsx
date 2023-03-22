@@ -1,24 +1,31 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import { deleteProduct } from "../../redux/productSlice";
+import { selectFilteredProducts } from "../../redux/selectors";
 
 // import PropTypes from 'prop-types';
 
 import Product from "../Product/Product";
 
 function ProductList() {
-  // const { products, onDeleteProduct } = useContext(DetailsContext);
-  const products = useSelector((state) => state.products.products);
   const dispatch = useDispatch();
+  const filteredProducts = useSelector(selectFilteredProducts);
 
-  const onDeleteProduct = (productId) => {
-    dispatch(deleteProduct(productId));
-  };
+  const onDeleteProduct = (productId) => dispatch(deleteProduct(productId));
+
+  // const filteredProducts = useMemo(() => {
+  //   return products.filter(
+  //     (
+  //       product // derived data
+  //     ) => product.title.toLowerCase().includes(filterTerm.trim().toLowerCase())
+  //   );
+  // }, [products, filterTerm]);
 
   return (
     <div>
-      {products?.length > 0 &&
-        products.map((product) => {
+      {filteredProducts?.length > 0 &&
+        filteredProducts.map((product) => {
           return (
             <Product
               key={product.id}
@@ -33,17 +40,5 @@ function ProductList() {
     </div>
   );
 }
-
-ProductList.propTypes = {
-  // products: PropTypes.arrayOf(
-  //     PropTypes.shape({
-  //         id: PropTypes.string.isRequired,
-  //         title: PropTypes.string.isRequired,
-  //         price: PropTypes.number.isRequired,
-  //         discount: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]).isRequired,
-  //     }).isRequired
-  // ).isRequired,
-  // onDeleteProduct: PropTypes.func
-};
 
 export default ProductList;

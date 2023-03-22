@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Loader } from "../components";
+
+import { selectComments, selectIsLoadingPosts, selectPostsError } from "../redux/selectors";
 import {
   fetchComments,
 } from "../redux/postsSlice";
@@ -10,10 +12,11 @@ import {
 import { CommentsList } from "../App.styled";
 
 function PostCommentsPage() {
-  const comments = useSelector((state) => state.postsData.comments);
-  const isLoading = useSelector((state) => state.postsData.isLoading);
-  const error = useSelector((state) => state.postsData.error);
   const dispatch = useDispatch();
+  const comments = useSelector(selectComments);
+  const isLoading = useSelector(selectIsLoadingPosts);
+  const error = useSelector(selectPostsError);
+  
   const { postId } = useParams();
 
   useEffect(() => {

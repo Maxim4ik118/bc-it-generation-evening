@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 
 import { Loader } from "../components";
+
+import { selectIsLoadingPosts, selectPostDetails, selectPostsError } from "../redux/selectors";
 import {
   fetchPostDetails,
 } from "../redux/postsSlice";
@@ -17,12 +19,12 @@ import {
 const PostCommentsPage = lazy(() => import("./PostCommentsPage"));
 
 function PostDetailsPage() {
-  const details = useSelector((state) => state.postsData.postDetails);
-  const isLoading = useSelector((state) => state.postsData.isLoading);
-  const error = useSelector((state) => state.postsData.error);
   const dispatch = useDispatch();
+  const details = useSelector(selectPostDetails);
+  const isLoading = useSelector(selectIsLoadingPosts);
+  const error = useSelector(selectPostsError);
+  
   const location = useLocation();
-
   const { postId } = useParams();
 
   useEffect(() => {

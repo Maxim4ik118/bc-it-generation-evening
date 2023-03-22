@@ -4,6 +4,7 @@ const initialState = {
   pressedKey: "",
   products: [],
   showDetails: false,
+  filterTerm: "",
 };
 
 const productsSlice = createSlice({
@@ -13,6 +14,9 @@ const productsSlice = createSlice({
   initialState,
   // Об'єкт редюсерів
   reducers: {
+    setFilterTerm(state, { payload }) {
+      state.filterTerm = payload;
+    },
     setToggleShowDetails(state) {
       state.showDetails = !state.showDetails;
     },
@@ -43,6 +47,7 @@ const productsSlice = createSlice({
 // Генератори екшенів
 export const {
   setToggleShowDetails,
+  setFilterTerm,
   deleteProduct,
   addProduct,
   setPressedKey,
