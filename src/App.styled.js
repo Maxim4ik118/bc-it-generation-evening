@@ -8,7 +8,8 @@ export const StyledNavLink = styled(NavLink)`
   padding: 15px;
   transition: all .3s;
   color: black;
-
+  font-family: "Roboto", sans-serif;
+  
   &.active {
     color: blue;
     border-bottom: 2px solid blue;

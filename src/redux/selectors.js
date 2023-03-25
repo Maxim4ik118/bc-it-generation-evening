@@ -12,7 +12,6 @@ export const selectPosts = (state) => state.postsData.posts;
 export const selectShowDetails = (state) => state.products.showDetails;
 export const selectFilterTerm = (state) => state.products.filterTerm;
 export const selectProducts = (state) => state.products.products;
-
 export const selectFilteredProducts = createSelector(
   selectFilterTerm,
   selectProducts,
@@ -23,4 +22,29 @@ export const selectFilteredProducts = createSelector(
       ) => product.title.toLowerCase().includes(filterTerm.trim().toLowerCase())
     );
   }
+);
+
+// ----- Products Selectors --------------------------------
+
+export const selectBasketItems = (state) => state.basket.basketItems;
+export const selectPromoCode = (state) => state.basket.promocode;
+export const selectItemsQuantity = createSelector(
+  selectBasketItems,
+  (items) => items.length
+);
+export const selectFinalPrice = createSelector(selectBasketItems, (items) =>
+  items
+    .reduce((acc, item) => {
+      if (item.discount) {
+        // 100$ | 50% -> 0 + 100 - (100*0.5) -> 50$
+        // 100$ | 5% -> 0 + 100 - (100*0.05) -> 95$
+        acc =
+          acc +
+          (item.price - (item.price * item.discount) / 100) * item.quantity;
+        return acc;
+      }
+      acc = acc + item.price * item.quantity;
+      return acc;
+    }, 0)
+    .toFixed(1)
 );

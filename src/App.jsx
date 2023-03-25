@@ -1,23 +1,24 @@
 import React, { lazy, Suspense } from "react";
+import { Helmet } from "react-helmet";
 import { Route, Routes } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 
-import { Details, Loader, ProductForm, ProductList } from "./components";
+import { Details, Loader } from "./components";
 
-// import HomePage from "./pages/HomePage";
-// import SearchPostsPage from "./pages/SearchPostsPage";
-// import PostsPage from "./pages/PostsPage";
-// import PostDetailsPage from "./pages/PostDetailsPage";
-import { setFilterTerm, setToggleShowDetails } from "./redux/productSlice";
+import { setToggleShowDetails } from "./redux/productSlice";
+
+import { selectItemsQuantity, selectShowDetails } from "./redux/selectors";
 
 import { StyledNavLink } from "./App.styled";
 import "./App.css";
-import { selectFilterTerm, selectShowDetails } from "./redux/selectors";
+import { Badge } from "@mui/material";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
 const PostsPage = lazy(() => import("./pages/PostsPage"));
 const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
 
 // const productsData = [
 //   {
@@ -40,76 +41,50 @@ const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
 //   },
 // ];
 
-/* 
-
-Компонент перемальовується(рендериться) коли:
-1. В ньому змінився стейт(setState)
-2. В нього прийшли нові пропси
-
-*/
-
-/*
-Робота з Маршрутеризацією:
-1. Розбити наш додаток на сторінки (pages), 
-  та створити відповідні компоненти сторінок
-2. Обгорнути весь додаток <App /> в компонент 
-  BrowserRouter, та не забути додати basename 
-  перед деплоєм на гітхаб
-3. Прописати навігацію на інші сторінки з допомогою
-  Link | NavLink
-4. Прописати маршрути Route під відповідні адреси
-  та підставити відповідні компоненти.
-5. Ми маємо згенерувати унікальні маршрути для наших сутностей
-6. Потрібно прописати шаблон адреси для Route, який буде реагувати
-   на динамічні параметри -> path="/posts/:postId", де postId - динамічний
-   параметр
-*/
-
-/*
-у мене питання трішки не по темі: 
-як налаштувати автоімпорт у файлах .tx  та .tsx? 
- Бо тепер він працює якось дуже вибірково
-
-
-*/
-
 const App = () => {
   const showDetails = useSelector(selectShowDetails);
-  const filterTerm = useSelector(selectFilterTerm);
   const dispatch = useDispatch();
+  const itemsQuantity = useSelector(selectItemsQuantity);
 
   const handleToggleDetails = () => {
     dispatch(setToggleShowDetails());
   };
 
-  const handleFilterInput = ({ target: { value } }) => {
-    dispatch(setFilterTerm(value));
-  }
-
   return (
-    <div className="App">
-      <nav>
-        <StyledNavLink to="/">Home</StyledNavLink>
-        <StyledNavLink to="/search">Search Post</StyledNavLink>
-        <StyledNavLink to="/posts">All Posts</StyledNavLink>
-      </nav>
+    <>
+      <Helmet>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        />
+        <title>Gangster Cart</title>
+      </Helmet>
+      <div className="App">
+        <nav>
+          <StyledNavLink to="/">Home</StyledNavLink>
+          <StyledNavLink to="/search">Search Post</StyledNavLink>
+          <StyledNavLink to="/posts">All Posts</StyledNavLink>
+          <StyledNavLink to="/cart">
+            <Badge color="secondary" badgeContent={itemsQuantity}>
+              <ShoppingBasketIcon />
+            </Badge>
+          </StyledNavLink>
+        </nav>
 
-      <button onClick={handleToggleDetails}>Toggle details</button>
-      {showDetails && <Details text="Awee wadaw wd awd awdwwd" />}
-      <ProductForm />
-      <p>Find product by name:</p>
-      <input onChange={handleFilterInput} value={filterTerm} type="text"  />
-      <ProductList />
+        <button onClick={handleToggleDetails}>Toggle details</button>
+        {showDetails && <Details text="Awee wadaw wd awd awdwwd" />}
 
-      <Suspense fallback={<Loader />}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/search" element={<SearchPostsPage />} />
-          <Route path="/posts" element={<PostsPage />} />
-          <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
-        </Routes>
-      </Suspense>
-    </div>
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/search" element={<SearchPostsPage />} />
+            <Route path="/posts" element={<PostsPage />} />
+            <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
+        </Suspense>
+      </div>
+    </>
   );
 };
 

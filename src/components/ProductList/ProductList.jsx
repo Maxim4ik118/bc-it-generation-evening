@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { addBasketItem } from "../../redux/basketSlice";
 
 import { deleteProduct } from "../../redux/productSlice";
 import { selectFilteredProducts } from "../../redux/selectors";
@@ -13,6 +14,7 @@ function ProductList() {
   const filteredProducts = useSelector(selectFilteredProducts);
 
   const onDeleteProduct = (productId) => dispatch(deleteProduct(productId));
+  const onAddToCart = (product) => dispatch(addBasketItem(product));
 
   // const filteredProducts = useMemo(() => {
   //   return products.filter(
@@ -34,6 +36,7 @@ function ProductList() {
               title={product.title}
               price={product.price}
               onDeleteProduct={onDeleteProduct}
+              onAddToCart={onAddToCart}
             />
           );
         })}
