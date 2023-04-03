@@ -36,8 +36,8 @@ export const selectFinalPrice = createSelector(selectBasketItems, (items) =>
   items
     .reduce((acc, item) => {
       if (item.discount) {
-        // 100$ | 50% -> 0 + 100 - (100*0.5) -> 50$
-        // 100$ | 5% -> 0 + 100 - (100*0.05) -> 95$
+        // 100$ | 50% -> 0 + 100 - (100 * 0.5) -> 50$
+        // 100$ | 5% -> 0 + 100 - (100 * 0.05) -> 95$
         acc =
           acc +
           (item.price - (item.price * item.discount) / 100) * item.quantity;
@@ -48,3 +48,7 @@ export const selectFinalPrice = createSelector(selectBasketItems, (items) =>
     }, 0)
     .toFixed(1)
 );
+
+
+// ----- User Selectors --------------------------------
+export const selectStatus = (state) => state.user.status;

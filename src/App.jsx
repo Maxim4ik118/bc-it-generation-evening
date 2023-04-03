@@ -1,7 +1,9 @@
 import React, { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet";
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from "react-redux";
+import { Badge } from "@mui/material";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 
 import { Details, Loader } from "./components";
@@ -12,13 +14,13 @@ import { selectItemsQuantity, selectShowDetails } from "./redux/selectors";
 
 import { StyledNavLink } from "./App.styled";
 import "./App.css";
-import { Badge } from "@mui/material";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const SearchPostsPage = lazy(() => import("./pages/SearchPostsPage"));
 const PostsPage = lazy(() => import("./pages/PostsPage"));
 const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
+const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 
 // const productsData = [
 //   {
@@ -69,10 +71,8 @@ const App = () => {
               <ShoppingBasketIcon />
             </Badge>
           </StyledNavLink>
+          <StyledNavLink to="/register">Register</StyledNavLink>
         </nav>
-
-        <button onClick={handleToggleDetails}>Toggle details</button>
-        {showDetails && <Details text="Awee wadaw wd awd awdwwd" />}
 
         <Suspense fallback={<Loader />}>
           <Routes>
@@ -81,8 +81,10 @@ const App = () => {
             <Route path="/posts" element={<PostsPage />} />
             <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </Suspense>
+        <ToastContainer />
       </div>
     </>
   );
