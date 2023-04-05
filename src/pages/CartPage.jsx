@@ -14,6 +14,7 @@ import {
 import { selectBasketItems, selectFinalPrice } from "../redux/selectors";
 
 import { CartItem, StyledCartBadge, StyledRemoveBtn } from "./CartPage.styled";
+import { withAuthRedirect } from "../hoc/withAuthRedirect";
 
 function CartPage() {
   const basketItems = useSelector(selectBasketItems);
@@ -107,4 +108,4 @@ function CartPage() {
   );
 }
 
-export default CartPage;
+export default withAuthRedirect(CartPage, "/login");

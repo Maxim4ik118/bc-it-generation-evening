@@ -15,6 +15,7 @@ import { productsReducer } from "./productSlice";
 import { postsReducer } from "./postsSlice";
 import { basketReducer } from "./basketSlice";
 import { userReducer } from "./user/userSlice";
+import { contactsReducer } from "./contacts/contactsSlice";
 
 const productsConfig = {
   key: "qwe228",
@@ -33,6 +34,7 @@ export const store = configureStore({
     basket: persistReducer(basketConfig, basketReducer),
     postsData: postsReducer,
     user: userReducer,
+    contacts: contactsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

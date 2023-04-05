@@ -51,4 +51,9 @@ export const selectFinalPrice = createSelector(selectBasketItems, (items) =>
 
 
 // ----- User Selectors --------------------------------
-export const selectStatus = (state) => state.user.status;
+export const selectUserStatus = (state) => state.user.status;
+export const selectIsLoggedIn = (state) => state.user.isLoggedIn;
+
+// ----- Contacts Selectors --------------------------------
+export const selectContactsStatus = (state) => state.contacts.status;
+export const selectContacts = (state) => state.contacts.contacts;

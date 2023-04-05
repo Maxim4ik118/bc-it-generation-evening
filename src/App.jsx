@@ -1,18 +1,20 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { Route, Routes } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "@mui/material";
 import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 
-import { Details, Loader } from "./components";
+import { Loader } from "./components";
 
-import { setToggleShowDetails } from "./redux/productSlice";
+import {
+  requestLogout,
+  requestRefreshUser,
+} from "./redux/user/user.operations";
+import { selectIsLoggedIn, selectItemsQuantity } from "./redux/selectors";
 
-import { selectItemsQuantity, selectShowDetails } from "./redux/selectors";
-
-import { StyledNavLink } from "./App.styled";
+import { StyledNav, StyledNavLink } from "./App.styled";
 import "./App.css";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -21,6 +23,8 @@ const PostsPage = lazy(() => import("./pages/PostsPage"));
 const PostDetailsPage = lazy(() => import("./pages/PostDetailsPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const ContactsPage = lazy(() => import("./pages/ContactsPage"));
 
 // const productsData = [
 //   {
@@ -44,13 +48,41 @@ const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 // ];
 
 const App = () => {
-  const showDetails = useSelector(selectShowDetails);
-  const dispatch = useDispatch();
   const itemsQuantity = useSelector(selectItemsQuantity);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const dispatch = useDispatch();
 
-  const handleToggleDetails = () => {
-    dispatch(setToggleShowDetails());
+  const handleLogOut = async () => {
+    try {
+      await dispatch(requestLogout()).unwrap();
+      toast.success(`You've Successfully logged out!`);
+    } catch (error) {
+      toast.error(`Oops! Something went wrong... ${error}`);
+    }
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (isLoggedIn || !token) return;
+
+    const refresh = async () => {
+      try {
+        await dispatch(requestRefreshUser()).unwrap();
+        toast.success(`You was successfully authorized!`);
+      } catch (error) {
+        toast.error(`Oops! Something went wrong... ${error}`);
+      }
+    };
+
+    refresh();
+    /*
+      1. IIFE?
+      
+      2. Difference between Function declaration and Function expression
+
+      3. Что такое связность и связанность? Coupling and cohansion
+    */
+  }, [dispatch, isLoggedIn]);
 
   return (
     <>
@@ -62,17 +94,34 @@ const App = () => {
         <title>Gangster Cart</title>
       </Helmet>
       <div className="App">
-        <nav>
-          <StyledNavLink to="/">Home</StyledNavLink>
-          <StyledNavLink to="/search">Search Post</StyledNavLink>
-          <StyledNavLink to="/posts">All Posts</StyledNavLink>
-          <StyledNavLink to="/cart">
-            <Badge color="secondary" badgeContent={itemsQuantity}>
-              <ShoppingBasketIcon />
-            </Badge>
-          </StyledNavLink>
-          <StyledNavLink to="/register">Register</StyledNavLink>
-        </nav>
+        <StyledNav>
+          {isLoggedIn ? (
+            <>
+              <StyledNavLink to="/">Home</StyledNavLink>
+              <StyledNavLink to="/contacts">Contacts</StyledNavLink>
+              <StyledNavLink to="/search">Search Post</StyledNavLink>
+              <StyledNavLink to="/posts">All Posts</StyledNavLink>
+              <StyledNavLink to="/cart">
+                <Badge color="secondary" badgeContent={itemsQuantity}>
+                  <ShoppingBasketIcon />
+                </Badge>
+              </StyledNavLink>
+              <div className="user-info">
+                <p>UserName: user_name</p>
+                <p>UserEmail: user_email@gmail.com</p>
+              </div>
+              <button className="log-out-btn" onClick={handleLogOut}>
+                Log Out
+              </button>
+            </>
+          ) : (
+            <>
+              <StyledNavLink to="/">Home</StyledNavLink>
+              <StyledNavLink to="/register">Register</StyledNavLink>
+              <StyledNavLink to="/login">Login</StyledNavLink>
+            </>
+          )}
+        </StyledNav>
 
         <Suspense fallback={<Loader />}>
           <Routes>
@@ -82,6 +131,8 @@ const App = () => {
             <Route path="/posts/:postId/*" element={<PostDetailsPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/contacts" element={<ContactsPage />} />
           </Routes>
         </Suspense>
         <ToastContainer />

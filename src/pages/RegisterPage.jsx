@@ -1,18 +1,28 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-import { requestRegister } from "../redux/user/operations";
-import { selectStatus } from "../redux/selectors";
+import { requestRegister } from "../redux/user/user.operations";
+import { selectIsLoggedIn, selectUserStatus } from "../redux/selectors";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function RegisterPage() {
-  const status = useSelector(selectStatus);
+  const status = useSelector(selectUserStatus);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const navigate = useNavigate();
 
   const nameInputRef = useRef();
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    navigate("/contacts");
+  }, [navigate, isLoggedIn]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
